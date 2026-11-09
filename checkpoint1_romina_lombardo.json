@@ -1,0 +1,169 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ae6d3bcc-7f4f-47de-9629-382c47ad8c5d",
+      "name": "When chat message received",
+      "webhookId": "574c179b-fa9f-4b67-9357-f028a7cdbcd3"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "[ROL Y PERFIL CORPORATIVO]\nEres un Asistente Ejecutivo de Calificación de Leads y Triaje de Soporte para la organización. Tu tono debe ser profesional, conciso, directo y formal. Utiliza siempre español neutro.\n\n[OBJETIVO DE LA SESIÓN]\nTu objetivo principal es recibir la consulta o estímulo desestructurado del usuario, analizar la intención y determinar si la información debe ser registrada o enviada mediante la herramienta de observabilidad / notificación disponible.\n\n[REGLAS Y RESTRICCIONES EXPLICITAS]\n1. Únicamente puedes ejecutar acciones utilizando las herramientas que se encuentran explícitamente conectadas a ti.\n2. Si la consulta del usuario requiere registrar datos o enviar un reporte de observabilidad, invoca la herramienta correspondiente de forma autónoma.\n3. No inventes datos, enlaces, ni información no proporcionada en la entrada del usuario o en el contexto (mitigación estricta de alucinaciones).\n4. No realices suposiciones sobre decisiones comerciales complejas que requieran aprobación humana.\n5. Bajo ninguna circunstancia uses lenguaje inclusivo con \"e\", \"x\" o \"@\". Mantén una redacción profesional estándar.\n\n[ESCALAMIENTO]\nSi la solicitud supera tu ámbito de acción o no cuentas con herramientas para resolverla, indica amablemente al usuario que la solicitud ha sido derivada al equipo correspondiente y finaliza la ejecución.",
+          "maxIterations": 7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "6e848066-d665-4e4d-a6f7-385fed9fc128",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        176
+      ],
+      "id": "97923200-833e-43c5-ab5a-25e892c85949",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Esta herramienta se activa de forma autónoma únicamente cuando el usuario solicite registrar una consulta, notificar al equipo sobre un evento calificado o generar un informe de observabilidad.",
+        "sendTo": "rlombardo1079@gmail.com",
+        "subject": "Nuevo evento registrado por el AI Agent",
+        "message": "Prueba de notificación",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        208
+      ],
+      "id": "cf401e82-465e-4412-9d76-8c9145dc8f53",
+      "name": "Send a message in Gmail",
+      "webhookId": "4247c35a-2709-4bb8-89c6-a153a124e25e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "KiB23EEw2vPVmWl8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2feef8ac-6f58-4971-a2c1-71f280d10345",
+              "name": "resultado",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        592,
+        5.6846188070873325
+      ],
+      "id": "5de40368-4ee0-409d-ac66-50b81dfb4c84",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "83824009-6f6a-4541-9b78-e06beda7c23c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cc994d35244878674c2ff3d6a6b8fc12879dc9d5d1fbf4eee07f26b159d18aa5"
+  },
+  "nodeGroups": [],
+  "id": "pUy4fQdl8CqDTjlk",
+  "tags": []
+}
